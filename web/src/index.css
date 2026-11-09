@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: #f8fafc;
+  --color-foreground: #020817;
+  --color-card: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+
+  --color-primary: #043887;
+  --color-primary-foreground: #e6f0fe;
+  --color-primary-100: #b8cce7;
+  --color-primary-400: #315d9f;
+  --color-primary-700: #04255b;
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+}
