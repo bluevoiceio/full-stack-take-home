@@ -20,3 +20,27 @@ export const formatUTCDateString = ({
 
 export const fullName = (user: Pick<User, 'firstName' | 'lastName'>) =>
   `${user.firstName} ${user.lastName}`;
+
+const csvCell = (value: unknown) => {
+  const text = value === null || value === undefined ? '' : String(value);
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+};
+
+export const exportToCSV = ({
+  data,
+  fileName = 'export',
+}: {
+  data: Record<string, unknown>[];
+  fileName?: string;
+}) => {
+  if (data.length === 0) return;
+  const headers = Object.keys(data[0]);
+  const lines = [headers, ...data.map(row => headers.map(key => row[key]))];
+  const csv = lines.map(line => line.map(csvCell).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${fileName}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+};

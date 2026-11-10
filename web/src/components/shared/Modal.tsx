@@ -10,7 +10,7 @@ interface ModalProps {
   title: string;
   body: ReactNode;
   confirmButtonLabel: string;
-  variant?: 'default' | 'destructive';
+  variant?: 'primary' | 'error';
   isConfirmLoading?: boolean;
   isConfirmDisabled?: boolean;
 }
@@ -22,7 +22,7 @@ export const Modal = ({
   title,
   body,
   confirmButtonLabel,
-  variant = 'default',
+  variant = 'primary',
   isConfirmLoading = false,
   isConfirmDisabled = false,
 }: ModalProps) => {
@@ -46,7 +46,7 @@ export const Modal = ({
         role='dialog'
         aria-modal='true'
         aria-label={title}
-        className='flex max-h-full w-full max-w-lg flex-col rounded-xl border bg-card shadow-lg'
+        className='flex max-h-[85vh] w-full max-w-lg flex-col rounded-lg border bg-background shadow-lg'
         onMouseDown={event => event.stopPropagation()}
         onSubmit={event => {
           event.preventDefault();
@@ -64,9 +64,9 @@ export const Modal = ({
             <X className='size-4' />
           </Button>
         </div>
-        <div className='overflow-y-auto px-6 py-5'>{body}</div>
+        <div className='flex-1 overflow-auto px-6 py-4'>{body}</div>
         <div className='flex justify-end gap-2 border-t px-6 py-4'>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='secondary' onClick={onClose}>
             Cancel
           </Button>
           <Button

@@ -1,67 +1,92 @@
+import type { ColumnDef } from '@tanstack/react-table';
+import { Building2, Shield, User as UserIcon, Users } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { PageLayout, Table, type TableColumn } from '@/components/shared';
-import { useGetUsersByDepartmentId } from '@/hooks/admin-api';
+import { PageLayout, StatsGrid, Table } from '@/components/shared';
+import {
+  useGetUnitsByDepartmentId,
+  useGetUsersByDepartmentId,
+} from '@/hooks/admin-api';
 import type { User } from '@/types/api-types';
 import { fullName } from '@/utils/format-utils';
 
 export const DepartmentUsers = () => {
   const { users, isLoading, isError } = useGetUsersByDepartmentId();
+  const { units } = useGetUnitsByDepartmentId();
 
-  const columns = useMemo<TableColumn<User>[]>(() => {
+  const columns = useMemo<ColumnDef<User>[]>(() => {
     const nameByEmail = new Map(
       users.map(user => [user.email, fullName(user)]),
     );
     return [
+      { header: 'Email', id: 'email', accessorKey: 'email', size: 300 },
       {
-        id: 'name',
-        header: 'Name',
-        cell: user => <span className='font-medium'>{fullName(user)}</span>,
+        header: 'First Name',
+        id: 'firstName',
+        accessorKey: 'firstName',
+        size: 140,
       },
-      { id: 'title', header: 'Title', cell: user => user.title },
       {
-        id: 'employeeId',
+        header: 'Last Name',
+        id: 'lastName',
+        accessorKey: 'lastName',
+        size: 140,
+      },
+      { header: 'Title', id: 'title', accessorKey: 'title', size: 150 },
+      {
         header: 'Employee ID',
-        cell: user => <span className='tabular-nums'>{user.employeeId}</span>,
+        id: 'employeeId',
+        accessorKey: 'employeeId',
+        size: 140,
       },
-      { id: 'email', header: 'Email', cell: user => user.email },
       {
-        id: 'superior',
-        header: 'Reports to',
-        cell: user =>
+        header: 'Reports To',
+        id: 'reportsTo',
+        accessorFn: user =>
           (user.superiorEmail && nameByEmail.get(user.superiorEmail)) ?? '—',
+        size: 170,
       },
-      {
-        id: 'role',
-        header: 'Role',
-        cell: user => (
-          <span
-            className={
-              user.role === 'admin'
-                ? 'rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary'
-                : 'rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground'
-            }
-          >
-            {user.role}
-          </span>
-        ),
-      },
+      { header: 'Role', id: 'role', accessorKey: 'role', size: 120 },
     ];
   }, [users]);
 
   return (
     <PageLayout
       title='Users'
-      description='Everyone in the department directory.'
+      description='Everyone in your department directory.'
     >
+      <StatsGrid
+        items={[
+          {
+            title: 'Total Users',
+            value: users.length,
+            icon: <Users className='size-5' />,
+          },
+          {
+            title: 'Admins',
+            value: users.filter(user => user.role === 'admin').length,
+            icon: <Shield className='size-5' />,
+          },
+          {
+            title: 'Officers',
+            value: users.filter(user => user.role === 'officer').length,
+            icon: <UserIcon className='size-5' />,
+          },
+          {
+            title: 'Units',
+            value: units.length,
+            icon: <Building2 className='size-5' />,
+          },
+        ]}
+      />
       <Table
         title='Users'
         columns={columns}
         data={users}
-        getRowId={user => user.id}
         isLoading={isLoading}
         isError={isError}
         emptyMessage='No users in this department.'
+        canExportCSV
       />
     </PageLayout>
   );

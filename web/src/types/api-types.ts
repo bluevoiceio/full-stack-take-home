@@ -47,6 +47,16 @@ export interface GroupResponse {
   members: User[];
 }
 
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  senderId: string;
+  receiverId: string;
+  createdAt: string;
+  read: boolean;
+}
+
 export interface LoginResponse {
   accessToken: string;
   user: User;

@@ -20,6 +20,13 @@ class NotificationService:
     ) -> list[UserNotification]:
         return self._notification_db.list_for_receiver(user_id, skip=skip, limit=limit)
 
+    def list_department_notifications(
+        self, department_id: uuid.UUID, skip: int = 0, limit: int | None = None
+    ) -> list[UserNotification]:
+        """Everything sent inside a department, one row per recipient."""
+        sender_ids = [user.id for user in UserService().get_users(department_id)]
+        return self._notification_db.list_for_senders(sender_ids, skip=skip, limit=limit)
+
     def notify_users(
         self,
         sender: User,

@@ -1,36 +1,18 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
+import { TabBar, tabBarIcon, useIsLargeScreen } from '../../components/shared';
 import { useGetUserNotifications } from '../../hooks/api/notificationsApi';
-import { useThemeStore } from '../../store/useThemeStore';
-
-type IconName = keyof typeof Ionicons.glyphMap;
 
 export default function TabLayout() {
-  const themeColors = useThemeStore(s => s.themeColors);
   const { unreadCount } = useGetUserNotifications();
-
-  const tabBarIcon =
-    (name: IconName, focusedName: IconName) =>
-    ({ focused, size }: { focused: boolean; size: number }) => (
-      <Ionicons
-        name={focused ? focusedName : name}
-        size={size}
-        color={focused ? themeColors.primary : themeColors.mutedText}
-      />
-    );
+  const isLargeScreen = useIsLargeScreen();
 
   return (
     <Tabs
+      tabBar={props => <TabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: themeColors.primary,
-        tabBarInactiveTintColor: themeColors.mutedText,
-        tabBarStyle: {
-          backgroundColor: themeColors.card,
-          borderTopColor: themeColors.border,
-        },
-        sceneStyle: { backgroundColor: themeColors.background },
+        tabBarPosition: isLargeScreen ? 'left' : 'bottom',
       }}
     >
       <Tabs.Screen

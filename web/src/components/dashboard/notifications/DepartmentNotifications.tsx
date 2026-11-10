@@ -1,120 +1,109 @@
-import { Send } from 'lucide-react';
-import { useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Bell, BellRing, Send, Users } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
+import { Button, PageLayout, StatsGrid, Table } from '@/components/shared';
 import {
-  Button,
-  Card,
-  FormInput,
-  PageLayout,
-  UserChecklist,
-} from '@/components/shared';
-import {
-  useGetGroupsByDepartmentId,
+  useGetNotificationHistory,
   useGetUsersByDepartmentId,
-  useSendNotification,
 } from '@/hooks/admin-api';
-import { cn } from '@/utils/cn';
+import type { Notification } from '@/types/api-types';
+import { formatUTCDateString, fullName } from '@/utils/format-utils';
+
+import { SendNotificationModal } from './SendNotificationModal';
 
 export const DepartmentNotifications = () => {
+  const { notifications, isLoading, isError } = useGetNotificationHistory();
   const { users } = useGetUsersByDepartmentId();
-  const { groups } = useGetGroupsByDepartmentId();
-  const { sendNotification, isPending } = useSendNotification();
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
 
-  const [title, setTitle] = useState('');
-  const [message, setMessage] = useState('');
-  const [groupIds, setGroupIds] = useState<string[]>([]);
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const columns = useMemo<ColumnDef<Notification>[]>(() => {
+    const nameById = new Map(users.map(user => [user.id, fullName(user)]));
+    return [
+      { header: 'Title', id: 'title', accessorKey: 'title', size: 200 },
+      { header: 'Message', id: 'message', accessorKey: 'message', size: 320 },
+      {
+        header: 'Sender',
+        id: 'sender',
+        accessorFn: row => nameById.get(row.senderId) ?? '—',
+        size: 170,
+      },
+      {
+        header: 'Recipient',
+        id: 'recipient',
+        accessorFn: row => nameById.get(row.receiverId) ?? '—',
+        size: 170,
+      },
+      {
+        header: 'Created At',
+        id: 'createdAt',
+        accessorKey: 'createdAt',
+        cell: info =>
+          formatUTCDateString({ utcDateString: info.row.original.createdAt }),
+        enableColumnFilter: false,
+        size: 190,
+      },
+      {
+        header: 'Read',
+        id: 'read',
+        accessorFn: row => (row.read ? 'Yes' : 'No'),
+        cell: info => (
+          <span className='font-semibold'>{info.getValue<string>()}</span>
+        ),
+        size: 110,
+      },
+    ];
+  }, [users]);
 
-  const canSend =
-    !!title.trim() && !!message.trim() && groupIds.length + userIds.length > 0;
-
-  const toggleGroup = (id: string) =>
-    setGroupIds(previous =>
-      previous.includes(id)
-        ? previous.filter(selected => selected !== id)
-        : [...previous, id],
-    );
-
-  const handleSend = async () => {
-    try {
-      await sendNotification({ title, message, groupIds, userIds });
-    } catch {
-      // The hook has already shown the error, and the form keeps what was typed.
-      return;
-    }
-    setTitle('');
-    setMessage('');
-    setGroupIds([]);
-    setUserIds([]);
-  };
+  const readCount = notifications.filter(row => row.read).length;
 
   return (
     <PageLayout
       title='Notifications'
-      description='Send an alert to groups or individual users. It appears in their app.'
+      description='Send and manage push notifications for your department.'
+      actions={
+        <Button onClick={() => setIsSendModalOpen(true)}>
+          <Send />
+          Send Notification
+        </Button>
+      }
     >
-      <Card className='max-w-2xl'>
-        <form
-          className='flex flex-col gap-5 p-6'
-          onSubmit={event => {
-            event.preventDefault();
-            handleSend();
-          }}
-        >
-          <FormInput
-            label='Title'
-            placeholder='Briefing moved'
-            value={title}
-            maxLength={80}
-            onChange={event => setTitle(event.target.value)}
-          />
-          <label className='flex flex-col gap-1.5 text-sm font-medium'>
-            Message
-            <textarea
-              rows={4}
-              value={message}
-              onChange={event => setMessage(event.target.value)}
-              className='rounded-md border bg-card px-3 py-2 text-sm font-normal focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
-            />
-          </label>
-
-          <fieldset>
-            <legend className='mb-1.5 text-sm font-medium'>Groups</legend>
-            <div className='flex flex-wrap gap-2'>
-              {groups.map(group => (
-                <button
-                  key={group.id}
-                  type='button'
-                  aria-pressed={groupIds.includes(group.id)}
-                  onClick={() => toggleGroup(group.id)}
-                  className={cn(
-                    'rounded-md border px-3 py-1.5 text-sm',
-                    groupIds.includes(group.id)
-                      ? 'border-primary bg-primary/10 font-medium text-primary'
-                      : 'hover:bg-muted',
-                  )}
-                >
-                  {group.name} · {group.members.length}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
-          <UserChecklist
-            label='Individual users'
-            users={users}
-            selectedIds={userIds}
-            onChange={setUserIds}
-          />
-
-          <div className='flex justify-end'>
-            <Button type='submit' disabled={!canSend} isLoading={isPending}>
-              <Send className='size-4' />
-              Send notification
-            </Button>
-          </div>
-        </form>
-      </Card>
+      <StatsGrid
+        items={[
+          {
+            title: 'Total Sent',
+            value: notifications.length,
+            icon: <Send className='size-5' />,
+          },
+          {
+            title: 'Read',
+            value: readCount,
+            icon: <Bell className='size-5' />,
+          },
+          {
+            title: 'Unread',
+            value: notifications.length - readCount,
+            icon: <BellRing className='size-5' />,
+          },
+          {
+            title: 'Recipients',
+            value: new Set(notifications.map(row => row.receiverId)).size,
+            icon: <Users className='size-5' />,
+          },
+        ]}
+      />
+      <Table
+        title='Notification History'
+        columns={columns}
+        data={notifications}
+        isLoading={isLoading}
+        isError={isError}
+        emptyMessage='Nothing sent yet. Send a notification to get started.'
+        canExportCSV
+      />
+      {isSendModalOpen && (
+        <SendNotificationModal onClose={() => setIsSendModalOpen(false)} />
+      )}
     </PageLayout>
   );
 };

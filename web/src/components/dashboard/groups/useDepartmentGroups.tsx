@@ -1,14 +1,17 @@
+import type { ColumnDef } from '@tanstack/react-table';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { Button, type TableColumn } from '@/components/shared';
+import { ActionsMenu } from '@/components/shared';
 import {
   useDeleteGroup,
   useGetGroupsByDepartmentId,
   useSaveGroup,
 } from '@/hooks/admin-api';
 import type { GroupResponse } from '@/types/api-types';
-import { formatUTCDateString, fullName } from '@/utils/format-utils';
+import { formatUTCDateString } from '@/utils/format-utils';
+
+import { GroupMembersCell } from './GroupMembersCell';
 
 type ModalState =
   | { kind: 'closed' }
@@ -22,51 +25,63 @@ export const useDepartmentGroups = () => {
   const { deleteGroup, isPending: isDeleting } = useDeleteGroup();
   const [modal, setModal] = useState<ModalState>({ kind: 'closed' });
 
-  const columns = useMemo<TableColumn<GroupResponse>[]>(
+  const columns = useMemo<ColumnDef<GroupResponse>[]>(
     () => [
       {
-        id: 'actions',
         header: 'Actions',
-        className: 'px-4 py-1.5',
-        cell: group => (
-          <div className='flex gap-1'>
-            <Button
-              variant='ghost'
-              size='icon'
-              aria-label={`Edit ${group.name}`}
-              onClick={() => setModal({ kind: 'details', group })}
-            >
-              <Pencil className='size-4' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              aria-label={`Delete ${group.name}`}
-              onClick={() => setModal({ kind: 'delete', group })}
-            >
-              <Trash2 className='size-4 text-destructive' />
-            </Button>
-          </div>
-        ),
+        id: 'actions',
+        cell: info => {
+          const group = info.row.original;
+          return (
+            <ActionsMenu
+              items={[
+                {
+                  label: 'Edit',
+                  icon: Pencil,
+                  onClick: () => setModal({ kind: 'details', group }),
+                },
+                {
+                  label: 'Delete',
+                  icon: Trash2,
+                  iconStyle: 'text-destructive',
+                  onClick: () => setModal({ kind: 'delete', group }),
+                },
+              ]}
+            />
+          );
+        },
+        enableSorting: false,
+        enableColumnFilter: false,
+        size: 130,
       },
+      { header: 'Name', id: 'name', accessorKey: 'name', size: 240 },
       {
-        id: 'name',
-        header: 'Name',
-        cell: group => <span className='font-medium'>{group.name}</span>,
-      },
-      {
-        id: 'members',
         header: 'Members',
-        cell: group => (
-          <span title={group.members.map(fullName).join(', ')}>
-            {group.members.length}
-          </span>
-        ),
+        id: 'members',
+        accessorFn: group => group.members.length,
+        cell: info => <GroupMembersCell members={info.row.original.members} />,
+        enableColumnFilter: false,
+        size: 150,
       },
       {
-        id: 'updatedAt',
+        header: 'Created',
+        id: 'createdAt',
+        accessorFn: group =>
+          formatUTCDateString({
+            utcDateString: group.createdAt,
+            variant: 'date-only',
+          }),
+        size: 150,
+      },
+      {
         header: 'Updated',
-        cell: group => formatUTCDateString({ utcDateString: group.updatedAt }),
+        id: 'updatedAt',
+        accessorFn: group =>
+          formatUTCDateString({
+            utcDateString: group.updatedAt,
+            variant: 'date-only',
+          }),
+        size: 150,
       },
     ],
     [],

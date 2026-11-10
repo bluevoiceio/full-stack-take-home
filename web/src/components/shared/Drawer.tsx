@@ -1,87 +1,109 @@
-import { LogOut, Menu, Shield } from 'lucide-react';
+import { LogOut, type LucideIcon, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { useGetDepartment } from '@/hooks/admin-api';
-import { useActiveUser } from '@/hooks/useActiveUser';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/utils/cn';
-import { fullName } from '@/utils/format-utils';
 
 import { Button } from './Button';
+import { Logo } from './Logo';
 import { ADMIN_NAV_ITEMS } from './navigation';
+
+const ITEM =
+  'flex w-full items-center rounded-md py-2 text-sm transition-colors duration-150';
+
+const ItemContent = ({
+  icon: Icon,
+  label,
+  isExpanded,
+}: {
+  icon: LucideIcon;
+  label: string;
+  isExpanded: boolean;
+}) => (
+  <span className='flex items-center gap-2'>
+    <Icon
+      className={cn('size-4 shrink-0', isExpanded && 'mr-3')}
+      aria-hidden='true'
+    />
+    {isExpanded && <span className='truncate'>{label}</span>}
+  </span>
+);
 
 export const Drawer = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const { user } = useActiveUser();
-  const { department } = useGetDepartment();
   const signOut = useAuthStore(state => state.signOut);
+  const spacing = isOpen ? 'px-3' : 'justify-center px-2';
 
   return (
     <aside
       className={cn(
-        'flex h-full shrink-0 flex-col border-r bg-muted/40 transition-[width]',
+        'z-40 flex h-full shrink-0 flex-col border-r bg-muted/5 motion-safe:transition-[width] motion-safe:duration-200 motion-safe:ease-in-out',
         isOpen ? 'w-56' : 'w-14',
       )}
     >
-      <div className='flex h-14 items-center gap-2 px-2.5'>
+      <div
+        className={cn(
+          'flex shrink-0 items-center gap-2 border-b px-2 py-3',
+          isOpen ? 'justify-start' : 'justify-center',
+        )}
+      >
         <Button
           variant='ghost'
           size='icon'
-          aria-label='Toggle navigation'
+          aria-label={isOpen ? 'Collapse navigation' : 'Expand navigation'}
           onClick={() => setIsOpen(previous => !previous)}
         >
-          <Menu className='size-4' />
+          <Menu className='size-5' aria-hidden='true' />
         </Button>
-        {isOpen && (
-          <span className='flex items-center gap-1.5 font-semibold text-primary'>
-            <Shield className='size-4' />
-            Admin
-          </span>
-        )}
+        {isOpen && <Logo variant='inlineWithText' />}
       </div>
 
-      <nav className='flex flex-1 flex-col gap-1 border-t px-2.5 py-3'>
-        {ADMIN_NAV_ITEMS.map(({ label, href, icon: Icon }) => (
-          <NavLink
-            key={href}
-            to={href}
-            end={href === '/dashboard'}
-            title={label}
-            className={({ isActive }) =>
-              cn(
-                'flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-medium',
-                isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-              )
-            }
-          >
-            <Icon className='size-4 shrink-0' />
-            {isOpen && label}
-          </NavLink>
-        ))}
+      <nav className='flex-1 overflow-y-auto px-2 py-6'>
+        <ul className={cn('space-y-1', isOpen ? 'p-2' : 'px-1 py-2')}>
+          {ADMIN_NAV_ITEMS.map(({ label, href, icon }) => (
+            <li key={href}>
+              <NavLink
+                to={href}
+                end={href === '/dashboard'}
+                aria-label={isOpen ? undefined : label}
+                title={isOpen ? undefined : label}
+                className={({ isActive }) =>
+                  cn(
+                    ITEM,
+                    spacing,
+                    isActive
+                      ? 'bg-primary font-semibold text-white shadow-xs'
+                      : 'font-medium text-primary hover:bg-primary/20',
+                  )
+                }
+              >
+                <ItemContent icon={icon} label={label} isExpanded={isOpen} />
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+
+        <hr className='my-4' />
+
+        <ul className={cn('space-y-1', isOpen ? 'p-2' : 'px-1 py-2')}>
+          <li>
+            <button
+              type='button'
+              aria-label={isOpen ? undefined : 'Log Out'}
+              title={isOpen ? undefined : 'Log Out'}
+              onClick={signOut}
+              className={cn(
+                ITEM,
+                spacing,
+                'bg-destructive font-medium text-white hover:bg-destructive/90',
+              )}
+            >
+              <ItemContent icon={LogOut} label='Log Out' isExpanded={isOpen} />
+            </button>
+          </li>
+        </ul>
       </nav>
-
-      <div className='flex items-center gap-2 border-t px-2.5 py-3'>
-        {isOpen && user && (
-          <div className='min-w-0 flex-1 px-1'>
-            <p className='truncate text-sm font-medium'>{fullName(user)}</p>
-            <p className='truncate text-xs text-muted-foreground'>
-              {department?.name ?? user.title}
-            </p>
-          </div>
-        )}
-        <Button
-          variant='ghost'
-          size='icon'
-          aria-label='Sign out'
-          title='Sign out'
-          onClick={signOut}
-        >
-          <LogOut className='size-4' />
-        </Button>
-      </div>
     </aside>
   );
 };

@@ -2,34 +2,39 @@ import { type InputHTMLAttributes, useId } from 'react';
 
 import { cn } from '@/utils/cn';
 
+import { inputErrorStyles, inputStyles } from './styles';
+
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
+  caption?: string;
 }
 
 export const FormInput = ({
   label,
   error,
+  caption,
   className,
   ...props
 }: FormInputProps) => {
   const id = useId();
   return (
-    <div className='flex flex-col gap-1.5'>
-      <label htmlFor={id} className='text-sm font-medium'>
+    <div className='flex flex-col gap-2'>
+      <label htmlFor={id} className='text-sm leading-none font-medium'>
         {label}
+        {props.required && <span className='ml-0.5 text-destructive'>*</span>}
       </label>
       <input
         id={id}
         aria-invalid={!!error}
-        className={cn(
-          'h-9 rounded-md border bg-card px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-          error && 'border-destructive',
-          className,
-        )}
+        className={cn(inputStyles, error && inputErrorStyles, className)}
         {...props}
       />
-      {error && <p className='text-xs text-destructive'>{error}</p>}
+      {error ? (
+        <p className='text-xs text-destructive'>{error}</p>
+      ) : (
+        caption && <p className='text-xs text-muted-foreground'>{caption}</p>
+      )}
     </div>
   );
 };

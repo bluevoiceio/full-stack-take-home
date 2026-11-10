@@ -1,5 +1,5 @@
 [project]
-name = "mini-api-service"
+name = "take-home-api"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [

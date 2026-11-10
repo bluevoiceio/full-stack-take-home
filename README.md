@@ -22,7 +22,7 @@ A few things to know before you read the code:
 - **Sign-in is a stand-in.** Both apps let you pick an account, and the token is just the user's ID. Leave it that way.
 - **Admins are the supervisors.** A user's role (`admin` or `officer`) decides what they may do. Their title (Sergeant, Corporal, …) is their rank.
 - **Timestamps from the API are UTC with no offset.** Both apps already handle this for the data that exists.
-- The database is a local SQLite file, seeded on first start. Delete `api/mini.db` to reset it.
+- The database is a local SQLite file, seeded on first start. Delete `api/takehome.db` to reset it.
 
 ## Running it
 

@@ -5,8 +5,8 @@ import { Drawer } from '@/components/shared';
 export const DashboardLayout = () => (
   <div className='flex h-dvh flex-row overflow-hidden'>
     <Drawer />
-    <div className='flex-1 overflow-y-auto px-6 py-6'>
-      <div className='mx-auto max-w-6xl'>
+    <div className='z-30 flex flex-1 flex-col overflow-hidden'>
+      <div className='size-full overflow-y-auto px-6 py-4'>
         <Outlet />
       </div>
     </div>

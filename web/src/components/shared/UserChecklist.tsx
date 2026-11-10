@@ -22,14 +22,14 @@ export const UserChecklist = ({
     );
 
   return (
-    <fieldset className='flex flex-col gap-1.5'>
-      <legend className='mb-1.5 text-sm font-medium'>
+    <fieldset className='flex flex-col'>
+      <legend className='mb-2 text-sm leading-none font-medium'>
         {label}{' '}
         <span className='font-normal text-muted-foreground'>
           ({selectedIds.length} selected)
         </span>
       </legend>
-      <div className='max-h-56 overflow-y-auto rounded-md border'>
+      <div className='max-h-56 overflow-y-auto rounded-md border border-input shadow-xs'>
         {users.map(user => (
           <label
             key={user.id}

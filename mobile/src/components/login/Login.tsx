@@ -1,55 +1,51 @@
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 import { API_ORIGIN } from '../../api/api';
 import { User } from '../../constants/types';
 import { useGetAccounts, useLogin } from '../../hooks/api/accountApi';
-import { useThemeStore } from '../../store/useThemeStore';
-import { Button, EmptyState, ListSkeleton, PageWrapper, Text } from '../shared';
+import {
+  Button,
+  EmptyState,
+  Icon,
+  ListSkeleton,
+  Logo,
+  PageWrapper,
+  SettingsCard,
+  Text,
+} from '../shared';
 import { fullName } from '../utils';
 
 // Stands in for real sign-in: pick anyone in the department.
 export const Login = () => {
-  const themeColors = useThemeStore(s => s.themeColors);
   const { accounts, isLoading, isError, refetch } = useGetAccounts();
   const { login, isPending } = useLogin();
 
   const renderAccount = ({ item }: { item: User }) => (
-    <Pressable
-      disabled={isPending}
-      onPress={() => login({ email: item.email })}
-      style={({ pressed }) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: themeColors.border,
-        backgroundColor: pressed ? themeColors.border : themeColors.card,
-      })}
-    >
-      <View style={{ flex: 1 }}>
-        <Text variant='subtitle1' weight='semibold'>
-          {fullName(item)}
-        </Text>
-        <Text color='mutedText'>{item.title}</Text>
-      </View>
-      <Text variant='caption' color='mutedText'>
-        {item.employeeId}
-      </Text>
-    </Pressable>
+    <SettingsCard
+      icon='person-circle-outline'
+      title={fullName(item)}
+      description={`${item.title} · ${item.employeeId}`}
+      action={<Icon name='chevron-forward' size={20} color='mutedText' />}
+      onPress={isPending ? undefined : () => login({ email: item.email })}
+    />
   );
 
   return (
-    <PageWrapper title='Who are you?' subtitle='Pick an account to sign in.'>
+    <PageWrapper>
       <FlatList
         data={accounts}
         keyExtractor={account => account.id}
         renderItem={renderAccount}
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingBottom: 20,
-          gap: 10,
-        }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 20, gap: 10 }}
+        ListHeaderComponent={
+          <View style={{ gap: 10, paddingBottom: 10 }}>
+            <Logo variant='withText' />
+            <Text variant='subtitle2' align='center' color='subtleText'>
+              Pick an account to sign in.
+            </Text>
+          </View>
+        }
         ListEmptyComponent={
           isLoading ? (
             <ListSkeleton />

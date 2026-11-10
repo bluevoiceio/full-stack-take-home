@@ -18,6 +18,6 @@ export const useAuthStore = create<AuthState>()(
       signIn: ({ accessToken, user }) => set({ accessToken, user }),
       signOut: () => set({ accessToken: null, user: null }),
     }),
-    { name: 'mini-admin-auth' },
+    { name: 'take-home-admin-auth' },
   ),
 );

@@ -7,7 +7,15 @@ import {
 } from '../../hooks/api/accountApi';
 import { useGetUserNotifications } from '../../hooks/api/notificationsApi';
 import { useAuthStore } from '../../store/useAuthStore';
-import { Button, Card, PageWrapper, Text } from '../shared';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Icon,
+  PageWrapper,
+  SettingsCard,
+  Text,
+} from '../shared';
 import { fullName } from '../utils';
 
 export const Home = () => {
@@ -24,59 +32,53 @@ export const Home = () => {
   return (
     <PageWrapper title={`Hi, ${user.firstName}`} subtitle={department?.name}>
       <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingBottom: 20,
-          gap: 12,
-        }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 20, gap: 10 }}
       >
-        <Card style={{ gap: 2 }}>
-          <Text variant='caption' color='mutedText'>
-            {user.employeeId}
-          </Text>
-          <Text variant='h5' weight='semibold'>
-            {fullName(user)}
-          </Text>
-          <Text color='subtleText'>{user.title}</Text>
-          {superior && (
-            <Text color='mutedText' style={{ marginTop: 8 }}>
-              Reports to {superior.title} {fullName(superior)}
-            </Text>
-          )}
-        </Card>
+        <SettingsCard
+          icon='person-circle-outline'
+          title={`${user.title} ${fullName(user)}`}
+          description={
+            superior
+              ? `${user.employeeId}\nReports to ${superior.title} ${fullName(superior)}`
+              : user.employeeId
+          }
+        />
 
-        <Card style={{ gap: 10 }}>
-          <Text variant='subtitle1' weight='semibold'>
-            {unreadCount === 0
+        <SettingsCard
+          icon={unreadCount === 0 ? 'notifications-outline' : 'notifications'}
+          iconColor={unreadCount === 0 ? 'subtleText' : 'info'}
+          title={
+            unreadCount === 0
               ? 'You are all caught up'
-              : `${unreadCount} unread ${unreadCount === 1 ? 'alert' : 'alerts'}`}
-          </Text>
-          <Button
-            label='Open alerts'
-            size='sm'
-            variant='secondary'
-            iconLeft='notifications-outline'
-            onPress={() => router.navigate('/alerts')}
-          />
-        </Card>
+              : `${unreadCount} unread ${unreadCount === 1 ? 'alert' : 'alerts'}`
+          }
+          description='Messages from your department'
+          action={<Icon name='chevron-forward' size={20} color='mutedText' />}
+          onPress={() => router.navigate('/alerts')}
+        />
 
         {reports.length > 0 && (
-          <Card style={{ gap: 10 }}>
-            <Text variant='subtitle1' weight='semibold'>
-              Your team
-            </Text>
-            {reports.map(report => (
-              <View
-                key={report.id}
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Text>{fullName(report)}</Text>
-                <Text color='mutedText'>{report.title}</Text>
-              </View>
-            ))}
+          <Card>
+            <CardHeader>
+              <Text variant='subtitle1' weight='semiBold'>
+                Your team
+              </Text>
+            </CardHeader>
+            <CardContent style={{ gap: 6 }}>
+              {reports.map(report => (
+                <View
+                  key={report.id}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Text>{fullName(report)}</Text>
+                  <Text color='subtleText'>{report.title}</Text>
+                </View>
+              ))}
+            </CardContent>
           </Card>
         )}
       </ScrollView>

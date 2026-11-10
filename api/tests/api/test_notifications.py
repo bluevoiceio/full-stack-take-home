@@ -57,3 +57,20 @@ def test_mark_read_and_delete_only_your_own(local_client: TestClient):
     assert local_client.patch(url, json={"read": True}, headers=get_headers(officer)).json()["read"] is True
     assert local_client.delete(url, headers=get_headers(officer)).status_code == 204
     assert local_client.delete(url, headers=get_headers(officer)).status_code == 404
+
+
+def test_history_lists_what_the_department_sent_and_is_admin_only(local_client: TestClient):
+    admin = make_user(UserRole.ADMIN)
+    officer = make_user(UserRole.OFFICER)
+    local_client.post(
+        BASE_URL,
+        json={"title": "Fuel cards", "message": "Hand them in.", "userIds": [str(officer.id)]},
+        headers=get_headers(admin),
+    )
+
+    history = local_client.get(f"{BASE_URL}/history", headers=get_headers(admin))
+
+    assert history.status_code == 200, history.text
+    assert history.json()[0]["title"] == "Fuel cards"
+    assert history.json()[0]["receiverId"] == str(officer.id)
+    assert local_client.get(f"{BASE_URL}/history", headers=get_headers(officer)).status_code == 403

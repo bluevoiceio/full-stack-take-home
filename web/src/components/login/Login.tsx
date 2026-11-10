@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { Card } from '@/components/shared';
+import { Button, Card, Logo } from '@/components/shared';
 import { API_ORIGIN, fetchAuthApi } from '@/hooks/apiConfig';
 import { useAuthStore } from '@/store/authStore';
 import type { LoginResponse, User } from '@/types/api-types';
@@ -25,35 +25,49 @@ export const Login = () => {
   });
 
   return (
-    <main className='flex min-h-dvh items-center justify-center p-6'>
-      <Card className='w-full max-w-sm overflow-hidden'>
-        <div className='border-b px-6 py-5'>
-          <h1 className='text-xl font-bold tracking-tight'>Sign in</h1>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Choose an admin account to continue.
-          </p>
+    <main className='flex min-h-dvh items-center justify-center bg-background p-4'>
+      <div className='w-full max-w-sm space-y-6'>
+        <div className='flex justify-center'>
+          <Logo variant='withText' />
         </div>
-        {isLoading && (
-          <p className='px-6 py-6 text-sm text-muted-foreground'>Loading…</p>
-        )}
-        {isError && (
-          <p className='px-6 py-6 text-sm text-muted-foreground'>
-            Could not reach the API at {API_ORIGIN}. Is it running?
-          </p>
-        )}
-        {admins.map(user => (
-          <button
-            key={user.id}
-            type='button'
-            disabled={isPending}
-            onClick={() => login(user.email)}
-            className='flex w-full items-center justify-between border-b px-6 py-3 text-left last:border-b-0 hover:bg-muted/50 disabled:opacity-50'
-          >
-            <span className='text-sm font-medium'>{fullName(user)}</span>
-            <span className='text-xs text-muted-foreground'>{user.title}</span>
-          </button>
-        ))}
-      </Card>
+        <Card className='overflow-hidden'>
+          <div className='flex flex-col space-y-1.5 p-6 pb-4'>
+            <h1 className='text-center text-lg leading-none font-semibold tracking-tight text-balance'>
+              Sign in
+            </h1>
+            <p className='text-center text-sm text-muted-foreground'>
+              Choose an admin account to continue.
+            </p>
+          </div>
+          <div className='space-y-2 p-6 pt-0'>
+            {isLoading && (
+              <p className='text-center text-sm text-muted-foreground'>
+                Loading…
+              </p>
+            )}
+            {isError && (
+              <p className='rounded-md border p-3 text-center text-sm text-balance text-muted-foreground'>
+                Could not reach the API at {API_ORIGIN}. Is it running?
+              </p>
+            )}
+            {admins.map(user => (
+              <Button
+                key={user.id}
+                variant='secondary'
+                fullWidth
+                disabled={isPending}
+                onClick={() => login(user.email)}
+                className='px-4'
+              >
+                <span className='flex-1 text-left'>{fullName(user)}</span>
+                <span className='text-xs font-normal text-muted-foreground'>
+                  {user.title}
+                </span>
+              </Button>
+            ))}
+          </div>
+        </Card>
+      </div>
     </main>
   );
 };

@@ -60,9 +60,8 @@ export const Alerts = () => {
         keyExtractor={notification => notification.id}
         renderItem={renderNotification}
         contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingBottom: 20,
-          gap: 10,
+          padding: 20,
+          gap: 6,
         }}
         refreshing={isRefetching}
         onRefresh={refetch}

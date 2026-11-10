@@ -35,7 +35,7 @@ export const DepartmentGroups = () => {
         title='Groups'
         columns={columns}
         data={groups}
-        getRowId={group => group.id}
+        canExportCSV
         isLoading={isLoading}
         isError={isError}
         emptyMessage='No groups yet. Create one to get started.'
@@ -53,7 +53,7 @@ export const DepartmentGroups = () => {
       {modal.kind === 'delete' && (
         <Modal
           isOpen
-          variant='destructive'
+          variant='error'
           title={`Delete ${modal.group.name}?`}
           body={
             <p className='text-sm text-muted-foreground'>

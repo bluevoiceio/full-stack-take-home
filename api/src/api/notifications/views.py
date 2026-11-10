@@ -31,6 +31,18 @@ def list_my_notifications(
     return [NotificationResponseModel.from_notification(notification) for notification in notifications]
 
 
+@router.get("/history", response_model=List[NotificationResponseModel])
+def list_notification_history(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(credentials_scheme)],
+    skip: int = Query(0, ge=0),
+    limit: int = Query(NOTIFICATION_LIST_LIMIT, ge=1, le=NOTIFICATION_LIST_LIMIT),
+):
+    user = user_from_auth_creds(credentials, allowed_roles=ADMIN_ROLES)
+    department_id = UserService().get_user(user.sub).department_id
+    notifications = NotificationService().list_department_notifications(department_id, skip=skip, limit=limit)
+    return [NotificationResponseModel.from_notification(notification) for notification in notifications]
+
+
 @router.post("", response_model=NotificationSentResponseModel, status_code=HTTP_201_CREATED)
 def send_notification(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(credentials_scheme)],

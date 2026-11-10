@@ -27,7 +27,7 @@ router.include_router(users.router, prefix="/users")
 router.include_router(groups.router, prefix="/groups")
 router.include_router(notifications.router, prefix="/notifications")
 
-app = FastAPI(title="Mini API service", lifespan=lifespan)
+app = FastAPI(title="Take-home API", lifespan=lifespan)
 app.include_router(router, prefix="/api/v1", responses=COMMON_ERROR_RESPONSES)
 app.include_router(auth.router)
 register_error_handlers(app)

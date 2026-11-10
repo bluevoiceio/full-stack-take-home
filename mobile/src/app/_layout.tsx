@@ -1,4 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -15,9 +16,19 @@ export default function RootLayout() {
   const { theme, themeColors, setTheme } = useThemeStore();
   const isSignedIn = useAuthStore(state => !!state.accessToken);
 
+  const [areFontsLoaded] = useFonts({
+    'Inter-Light': require('../../assets/fonts/Inter-Light.ttf'),
+    'Inter-Regular': require('../../assets/fonts/Inter-Regular.ttf'),
+    'Inter-SemiBold': require('../../assets/fonts/Inter-SemiBold.ttf'),
+    'Inter-Bold': require('../../assets/fonts/Inter-Bold.ttf'),
+    'Inter-ExtraBold': require('../../assets/fonts/Inter-ExtraBold.ttf'),
+  });
+
   useEffect(() => {
     setTheme(deviceTheme === 'dark' ? 'dark' : 'light');
   }, [deviceTheme, setTheme]);
+
+  if (!areFontsLoaded) return null;
 
   return (
     <QueryClientProvider client={queryClient}>

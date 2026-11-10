@@ -22,6 +22,20 @@ class NotificationDB:
                 query = query.limit(limit)
             return list(session.exec(query).all())
 
+    def list_for_senders(
+        self, sender_ids: list[uuid.UUID], skip: int = 0, limit: int | None = None
+    ) -> list[UserNotification]:
+        with get_session() as session:
+            query = (
+                select(UserNotification)
+                .where(col(UserNotification.sender_id).in_(sender_ids))
+                .order_by(col(UserNotification.created_at).desc())
+                .offset(skip)
+            )
+            if limit is not None:
+                query = query.limit(limit)
+            return list(session.exec(query).all())
+
     def get_notification(self, notification_id: uuid.UUID) -> UserNotification:
         with get_session() as session:
             notification = session.get(UserNotification, notification_id)

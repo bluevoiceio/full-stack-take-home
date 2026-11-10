@@ -1,3 +1,3 @@
 import os
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./mini.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./takehome.db")

@@ -1,12 +1,11 @@
-import { Ionicons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { useThemeStore } from '../../store/useThemeStore';
+import { Icon, IconName } from './Icon';
 import { Text } from './Text';
 
 interface EmptyStateProps {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: IconName;
   title: string;
   caption: string;
   action?: ReactNode;
@@ -17,21 +16,19 @@ export const EmptyState = ({
   title,
   caption,
   action,
-}: EmptyStateProps) => {
-  const themeColors = useThemeStore(s => s.themeColors);
-  return (
-    <View style={{ alignItems: 'center', gap: 6, paddingTop: 60 }}>
-      <Ionicons name={icon} size={44} color={themeColors.outline} />
-      <Text variant='subtitle1' weight='semibold' style={{ marginTop: 6 }}>
-        {title}
-      </Text>
-      <Text
-        color='mutedText'
-        style={{ textAlign: 'center', maxWidth: 280, marginBottom: 10 }}
-      >
-        {caption}
-      </Text>
-      {action}
-    </View>
-  );
-};
+}: EmptyStateProps) => (
+  <View style={{ alignItems: 'center', gap: 6, paddingTop: 60 }}>
+    <Icon name={icon} size={48} color='mutedText' />
+    <Text variant='subtitle1' weight='semiBold' style={{ marginTop: 6 }}>
+      {title}
+    </Text>
+    <Text
+      color='subtleText'
+      align='center'
+      style={{ maxWidth: 280, marginBottom: 10 }}
+    >
+      {caption}
+    </Text>
+    {action && <View style={{ alignSelf: 'center' }}>{action}</View>}
+  </View>
+);
