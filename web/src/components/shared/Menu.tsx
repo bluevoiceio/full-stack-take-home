@@ -11,7 +11,6 @@ export interface MenuItemProps {
   icon?: LucideIcon;
   /** Extra classes for the icon, e.g. `text-destructive`. */
   iconStyle?: string;
-  isEnabled?: boolean;
 }
 
 interface MenuProps {
@@ -49,27 +48,28 @@ export const Menu = ({
   >
     {close => (
       <div role='menu'>
-        {items.map(({ label, onClick, icon: Icon, ...item }) => (
-          <button
-            key={label}
-            type='button'
-            role='menuitem'
-            disabled={item.isEnabled === false}
-            onClick={() => {
-              close();
-              onClick();
-            }}
-            className='flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50'
-          >
-            {Icon && (
-              <Icon
-                className={cn('mr-2 size-4', item.iconStyle)}
-                aria-hidden='true'
-              />
-            )}
-            {label}
-          </button>
-        ))}
+        {items.map(
+          ({ label, onClick, icon: Icon, iconStyle: itemIconStyle }) => (
+            <button
+              key={label}
+              type='button'
+              role='menuitem'
+              onClick={() => {
+                close();
+                onClick();
+              }}
+              className='flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground'
+            >
+              {Icon && (
+                <Icon
+                  className={cn('mr-2 size-4', itemIconStyle)}
+                  aria-hidden='true'
+                />
+              )}
+              {label}
+            </button>
+          ),
+        )}
       </div>
     )}
   </Popover>

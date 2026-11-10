@@ -13,8 +13,8 @@ None of that exists here yet. What does exist is the department it happens in.
 | Folder    | Built with                            | Used by     | Already does                                                    |
 | --------- | ------------------------------------- | ----------- | --------------------------------------------------------------- |
 | `api/`    | FastAPI, SQLModel, SQLite             | Both apps   | Department, units, users, groups, notifications                 |
-| `web/`    | React, Vite, Tailwind, TanStack Query | Supervisors | Users table, groups with members, sending notifications         |
-| `mobile/` | React Native, Expo Router, TanStack Query | Officers | Home, alerts with unread badge, settings, light and dark themes |
+| `web/`    | React, Vite, Tailwind, TanStack Query | Supervisors | Home dashboard, users, groups with members, notifications       |
+| `mobile/` | Expo, Expo Router, TanStack Query     | Officers    | Home, alerts with unread badge, settings, light and dark themes |
 
 A few things to know before you read the code:
 
@@ -85,7 +85,7 @@ Real schedules have rules. Work out which ones matter for this department, enfor
 - **The API is the source of truth.** Rules are enforced there, not only in the UI.
 - **Build on what's here.** Scheduling should read as part of this product: same layering in the API, same patterns and look in the apps. If you think a pattern is wrong for the job, change it and tell us why.
 - **Leave sign-in alone.** It is deliberately fake, and we're not grading it.
-- **Keep the checks green.** `pytest`, plus `npm run typecheck` in `web/` and `mobile/`.
+- **Keep the checks green.** `pytest`, `npm run typecheck` in `web/` and `mobile/`, and `npm run lint` in `web/`.
 - Everything else is open: the data model, endpoints, libraries, storage.
 
 ## Time

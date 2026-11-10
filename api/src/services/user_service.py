@@ -17,10 +17,10 @@ class UserService:
         for user in seed.USERS:
             if user.id == user_id:
                 return user
-        raise EntityNotFound(f"User {user_id=} not found")
+        raise EntityNotFound("User not found")
 
     def get_user_by_email(self, email: str) -> User:
         for user in seed.USERS:
             if user.email == email.strip().lower():
                 return user
-        raise EntityNotFound(f"User {email=} not found")
+        raise EntityNotFound("User not found")

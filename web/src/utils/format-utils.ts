@@ -37,10 +37,19 @@ export const exportToCSV = ({
   const headers = Object.keys(data[0]);
   const lines = [headers, ...data.map(row => headers.map(key => row[key]))];
   const csv = lines.map(line => line.map(csvCell).join(',')).join('\n');
-  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  const url = URL.createObjectURL(
+    new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' }),
+  );
   const link = document.createElement('a');
   link.href = url;
   link.download = `${fileName}.csv`;
   link.click();
   URL.revokeObjectURL(url);
 };
+
+// History has one row per recipient. A send shares a sender, title and timestamp.
+export const countSends = (
+  rows: { senderId: string; title: string; createdAt: string }[],
+) =>
+  new Set(rows.map(row => `${row.senderId}|${row.title}|${row.createdAt}`))
+    .size;

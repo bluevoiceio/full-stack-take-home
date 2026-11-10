@@ -4,7 +4,7 @@ from typing import Sequence
 
 from src.db.notification import NotificationDB
 from src.exceptions import EntityNotFound, UnprocessableEntity
-from src.models import User, UserNotification
+from src.models import User, UserNotification, utcnow
 from src.services.group_service import GroupService
 from src.services.user_service import UserService
 
@@ -47,9 +47,12 @@ class NotificationService:
         if not recipients:
             raise UnprocessableEntity("A notification needs at least one recipient in this department.")
 
+        sent_at = utcnow()
         notifications = self._notification_db.create_notifications(
             [
-                UserNotification(title=title, message=message, sender_id=sender.id, receiver_id=recipient.id)
+                UserNotification(
+                    title=title, message=message, sender_id=sender.id, receiver_id=recipient.id, created_at=sent_at
+                )
                 for recipient in recipients
             ]
         )
@@ -74,5 +77,5 @@ class NotificationService:
     def _get_own(self, notification_id: uuid.UUID, user_id: uuid.UUID) -> UserNotification:
         notification = self._notification_db.get_notification(notification_id)
         if notification.receiver_id != user_id:
-            raise EntityNotFound(f"Notification {notification_id=} not found")
+            raise EntityNotFound("Notification not found")
         return notification

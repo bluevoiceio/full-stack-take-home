@@ -20,7 +20,7 @@ import {
   useGetUsersByDepartmentId,
 } from '@/hooks/admin-api';
 import { useActiveUser } from '@/hooks/useActiveUser';
-import { formatUTCDateString } from '@/utils/format-utils';
+import { countSends, formatUTCDateString } from '@/utils/format-utils';
 
 interface WidgetProps {
   title: string;
@@ -83,7 +83,10 @@ export const DashboardHome = () => {
   // History has a row per recipient, so collapse it back to one line per send.
   const recentSends = [
     ...new Map(
-      notifications.map(row => [`${row.title}|${row.createdAt}`, row]),
+      notifications.map(row => [
+        `${row.senderId}|${row.title}|${row.createdAt}`,
+        row,
+      ]),
     ).values(),
   ].slice(0, 3);
 
@@ -118,7 +121,7 @@ export const DashboardHome = () => {
           },
           {
             title: 'Notifications Sent',
-            value: notifications.length,
+            value: countSends(notifications),
             icon: <Bell className='size-5' />,
             href: '/dashboard/notifications',
           },

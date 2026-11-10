@@ -77,7 +77,7 @@ export const GlobalToastHost = () => {
         >
           {toast.title}
         </Text>
-        {toast.caption && (
+        {!!toast.caption && (
           <Text
             testID='toastText2'
             color='subtleText'

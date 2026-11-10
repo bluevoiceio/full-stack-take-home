@@ -66,21 +66,25 @@ export const useDepartmentGroups = () => {
       {
         header: 'Created',
         id: 'createdAt',
-        accessorFn: group =>
+        accessorKey: 'createdAt',
+        cell: info =>
           formatUTCDateString({
-            utcDateString: group.createdAt,
+            utcDateString: info.row.original.createdAt,
             variant: 'date-only',
           }),
+        enableColumnFilter: false,
         size: 150,
       },
       {
         header: 'Updated',
         id: 'updatedAt',
-        accessorFn: group =>
+        accessorKey: 'updatedAt',
+        cell: info =>
           formatUTCDateString({
-            utcDateString: group.updatedAt,
+            utcDateString: info.row.original.updatedAt,
             variant: 'date-only',
           }),
+        enableColumnFilter: false,
         size: 150,
       },
     ],

@@ -42,7 +42,6 @@ interface TableProps<T> {
   /** Shown when there are no rows at all, as opposed to none matching the filters. */
   emptyMessage?: string;
   canExportCSV?: boolean;
-  extraHeaderButtons?: ReactNode;
 }
 
 const buildCsvRows = <T,>(table: TableInstance<T>) => {
@@ -70,7 +69,6 @@ export const Table = <T,>({
   isError = false,
   emptyMessage,
   canExportCSV = false,
-  extraHeaderButtons,
 }: TableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -116,7 +114,6 @@ export const Table = <T,>({
               {filteredCount === 1 ? 'row' : 'rows'})
             </Button>
           )}
-          {extraHeaderButtons}
         </div>
       </div>
 

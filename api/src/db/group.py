@@ -21,7 +21,7 @@ class GroupDB:
         with get_session() as session:
             group = session.get(Group, group_id)
             if group is None:
-                raise EntityNotFound(f"Group {group_id=} not found")
+                raise EntityNotFound("Group not found")
             return group
 
     def get_group_by_name(self, department_id: uuid.UUID, name: str) -> Group | None:
@@ -43,7 +43,7 @@ class GroupDB:
         with get_session() as session:
             group = session.get(Group, group_id)
             if group is None:
-                raise EntityNotFound(f"Group {group_id=} not found")
+                raise EntityNotFound("Group not found")
             group.name = name
             group.updated_at = utcnow()
             try:
@@ -57,7 +57,7 @@ class GroupDB:
         with get_session() as session:
             group = session.get(Group, group_id)
             if group is None:
-                raise EntityNotFound(f"Group {group_id=} not found")
+                raise EntityNotFound("Group not found")
             session.delete(group)
             session.commit()
 

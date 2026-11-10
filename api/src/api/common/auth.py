@@ -3,9 +3,9 @@ from typing import Optional, Sequence
 
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
+from starlette.status import HTTP_401_UNAUTHORIZED
 
-from src.exceptions import EntityNotFound
+from src.exceptions import EntityNotFound, UserNotAllowedToPerformAction
 from src.models import AuthUser, User, UserRole
 from src.services.user_service import UserService
 
@@ -30,5 +30,5 @@ def user_from_auth_creds(
     except (ValueError, EntityNotFound) as e:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Invalid auth token") from e
     if allowed_roles is not None and user.role not in allowed_roles:
-        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="User is not allowed to perform this action")
+        raise UserNotAllowedToPerformAction()
     return AuthUser(sub=user.id, email=user.email, role=user.role, department_id=user.department_id)

@@ -31,6 +31,8 @@ def test_notifying_a_group_reaches_each_member_once(local_client: TestClient):
 
     assert sent.status_code == 201, sent.text
     assert sent.json() == {"recipientCount": 5}
+    history = local_client.get(f"{BASE_URL}/history", headers=get_headers(admin)).json()
+    assert len({row["createdAt"] for row in history if row["title"] == "Roll call"}) == 1
     inbox = local_client.get(BASE_URL, headers=get_headers(member)).json()
     assert len(inbox) == before + 1
     assert inbox[0]["title"] == "Roll call"

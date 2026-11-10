@@ -12,7 +12,7 @@ class DepartmentDB:
         with get_session() as session:
             department = session.get(Department, department_id)
             if department is None:
-                raise EntityNotFound(f"Department {department_id=} not found")
+                raise EntityNotFound("Department not found")
             return department
 
     def list_units(self, department_id: uuid.UUID) -> list[Unit]:

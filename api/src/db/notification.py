@@ -40,7 +40,7 @@ class NotificationDB:
         with get_session() as session:
             notification = session.get(UserNotification, notification_id)
             if notification is None:
-                raise EntityNotFound(f"Notification {notification_id=} not found")
+                raise EntityNotFound("Notification not found")
             return notification
 
     def create_notifications(self, notifications: list[UserNotification]) -> list[UserNotification]:
@@ -53,7 +53,7 @@ class NotificationDB:
         with get_session() as session:
             notification = session.get(UserNotification, notification_id)
             if notification is None:
-                raise EntityNotFound(f"Notification {notification_id=} not found")
+                raise EntityNotFound("Notification not found")
             notification.read = read
             session.commit()
             return notification
@@ -62,6 +62,6 @@ class NotificationDB:
         with get_session() as session:
             notification = session.get(UserNotification, notification_id)
             if notification is None:
-                raise EntityNotFound(f"Notification {notification_id=} not found")
+                raise EntityNotFound("Notification not found")
             session.delete(notification)
             session.commit()

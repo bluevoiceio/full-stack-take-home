@@ -9,6 +9,8 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/utils/cn';
 
+const PANEL_ROOM = 280;
+
 interface PopoverProps {
   /** The button's contents. The button itself is rendered here. */
   trigger: ReactNode;
@@ -39,8 +41,12 @@ export const Popover = ({
   const open = () => {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (!rect) return;
+    // Below the button by default, above it when the button sits low in the window.
+    const opensUp = window.innerHeight - rect.bottom < PANEL_ROOM;
     setPosition({
-      top: rect.bottom + 4,
+      ...(opensUp
+        ? { bottom: window.innerHeight - rect.top + 4 }
+        : { top: rect.bottom + 4 }),
       ...(align === 'end'
         ? { right: window.innerWidth - rect.right }
         : { left: rect.left }),

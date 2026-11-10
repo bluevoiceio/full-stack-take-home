@@ -8,7 +8,11 @@ import {
   useGetUsersByDepartmentId,
 } from '@/hooks/admin-api';
 import type { Notification } from '@/types/api-types';
-import { formatUTCDateString, fullName } from '@/utils/format-utils';
+import {
+  countSends,
+  formatUTCDateString,
+  fullName,
+} from '@/utils/format-utils';
 
 import { SendNotificationModal } from './SendNotificationModal';
 
@@ -72,8 +76,13 @@ export const DepartmentNotifications = () => {
         items={[
           {
             title: 'Total Sent',
-            value: notifications.length,
+            value: countSends(notifications),
             icon: <Send className='size-5' />,
+          },
+          {
+            title: 'Deliveries',
+            value: notifications.length,
+            icon: <Users className='size-5' />,
           },
           {
             title: 'Read',
@@ -84,11 +93,6 @@ export const DepartmentNotifications = () => {
             title: 'Unread',
             value: notifications.length - readCount,
             icon: <BellRing className='size-5' />,
-          },
-          {
-            title: 'Recipients',
-            value: new Set(notifications.map(row => row.receiverId)).size,
-            icon: <Users className='size-5' />,
           },
         ]}
       />

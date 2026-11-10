@@ -22,7 +22,11 @@ export const Home = () => {
   const user = useAuthStore(state => state.user);
   const { department } = useGetDepartment();
   const { users } = useGetDepartmentUsers();
-  const { unreadCount } = useGetUserNotifications();
+  const {
+    notifications,
+    unreadCount,
+    isError: isAlertsError,
+  } = useGetUserNotifications();
 
   if (!user) return null;
 
@@ -49,9 +53,13 @@ export const Home = () => {
           icon={unreadCount === 0 ? 'notifications-outline' : 'notifications'}
           iconColor={unreadCount === 0 ? 'subtleText' : 'info'}
           title={
-            unreadCount === 0
-              ? 'You are all caught up'
-              : `${unreadCount} unread ${unreadCount === 1 ? 'alert' : 'alerts'}`
+            isAlertsError
+              ? 'Could not load your alerts'
+              : !notifications
+                ? 'Checking your alerts…'
+                : unreadCount === 0
+                  ? 'You are all caught up'
+                  : `${unreadCount} unread ${unreadCount === 1 ? 'alert' : 'alerts'}`
           }
           description='Messages from your department'
           action={<Icon name='chevron-forward' size={20} color='mutedText' />}

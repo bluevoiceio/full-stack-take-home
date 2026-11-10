@@ -20,7 +20,7 @@ def test_officer_forbidden(local_client: TestClient):
     response = local_client.get(BASE_URL, headers=get_headers(make_user(UserRole.OFFICER)))
 
     assert response.status_code == 403
-    assert response.json() == {"detail": "User is not allowed to perform this action"}
+    assert response.json() == {"message": "User is not allowed to perform this action"}
 
 
 def test_create_assign_and_delete(local_client: TestClient):
