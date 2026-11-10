@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Shifts",
-    "slug": "shifts",
+    "name": "Mini App",
+    "slug": "mini-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
@@ -19,7 +19,10 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "scheme": "miniapp"
   }
 }

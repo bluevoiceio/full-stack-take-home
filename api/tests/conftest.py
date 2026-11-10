@@ -1,15 +1,24 @@
-from datetime import date
+from typing import Generator
 
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app, get_store
-from app.store import seeded_store
+from src import seed
+from src.db import init_engine
+from src.main import app
+from src.models import User, UserRole
 
 
 @pytest.fixture
-def client():
-    store = seeded_store(today=date(2026, 11, 9))
-    app.dependency_overrides[get_store] = lambda: store
+def local_client() -> Generator[TestClient, None, None]:
+    """A client over a fresh, seeded, in-memory database."""
+    init_engine("sqlite://")
     yield TestClient(app)
-    app.dependency_overrides.clear()
+
+
+def get_headers(user: User) -> dict[str, str]:
+    return {"Authorization": f"Bearer {user.id}"}
+
+
+def make_user(role: UserRole) -> User:
+    return next(user for user in seed.USERS if user.role == role)
