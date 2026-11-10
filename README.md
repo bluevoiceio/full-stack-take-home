@@ -94,7 +94,7 @@ Plan on about 4 to 6 hours. We'd rather see a smaller thing done well than a lar
 
 ## AI tools
 
-Use whatever tools you normally work with, AI included. We'd like to see how you work with them, so please include your session transcripts in a `transcripts/` folder. In Claude Code, `/export` writes one. For other tools, use their export or copy the conversation into a file. They don't need to be tidy, and you can remove anything private.
+Use whatever tools you normally work with, AI included. We'd like to see how you work with them, so please send us your session transcripts with your submission. In Claude Code, `/export` writes one. For other tools, use their export or copy the conversation into a file. They don't need to be tidy, and you can remove anything private.
 
 In the follow-up call you'll run the project, walk us through the code, make a small change live, and talk about how the design would grow. Be ready to explain every decision, whoever or whatever wrote the code.
 
@@ -120,7 +120,7 @@ Replace this file with your own README. Cover:
 
 1. Click **Use this template**, then **Create a new repository**. Make it **private**.
 2. Commit as you go.
-3. When you're done, add [@Ninkuk](https://github.com/Ninkuk) and [@Eralyne](https://github.com/Eralyne) as collaborators, and reply to your invitation email with the link.
+3. When you're done, add [@Ninkuk](https://github.com/Ninkuk) and [@Eralyne](https://github.com/Eralyne) as collaborators, and reply to your invitation email with the repo link, a short video walking us through your app, and your AI session transcripts.
 
 Please send it back within 7 days of receiving it.
 
