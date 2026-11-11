@@ -122,7 +122,7 @@ Replace this file with your own README. Cover:
 2. Commit as you go.
 3. When you're done, add [@Ninkuk](https://github.com/Ninkuk) and [@Eralyne](https://github.com/Eralyne) as collaborators, and reply to your invitation email with the repo link, a short video walking us through your app, and your AI session transcripts.
 
-Please send it back within 7 days of receiving it.
+Please send it back within 24 hours of receiving it.
 
 ## Questions
 
